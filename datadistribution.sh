@@ -16,11 +16,11 @@ build_requires:
 source: https://github.com/AliceO2Group/DataDistribution
 incremental_recipe: |
   # reduce number of compile slots if invoked  by Jenkins
-  if [[ -v JENKINS_HOME ]]; then
+  if [ ! -z "${JENKINS_HOME+x}" ]; then
     JOBS=1
   fi
   make ${JOBS:+-j$JOBS} install
-  mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
+  mkdir -p "$INSTALLROOT/etc/modulefiles" && rsync -a --delete etc/modulefiles/ "$INSTALLROOT/etc/modulefiles"
 ---
 #!/bin/bash -ex
 
@@ -28,19 +28,18 @@ case $ARCHITECTURE in
     osx*) [[ ! $BOOST_ROOT ]] && BOOST_ROOT=$(brew --prefix boost);;
 esac
 
-cmake $SOURCEDIR                                              \
-      ${CMAKE_GENERATOR:+-G "$CMAKE_GENERATOR"}               \
-      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                     \
-      ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT}                 \
-      ${FAIRLOGGER_ROOT:+-DFairLogger_ROOT=$FAIRLOGGER_ROOT}  \
-      ${FAIRMQ_ROOT:+-DFairMQ_ROOT=$FAIRMQ_ROOT}              \
-      ${PPCONSUL_ROOT:+-Dppconsul_DIR=${PPCONSUL_ROOT}/cmake} \
-      ${O2_ROOT:+-DO2_ROOT=$O2_ROOT}                          \
-      ${MONITORING_ROOT:+-DMonitoring_ROOT=$MONITORING_ROOT}  \
-      ${PROTOBUF_ROOT:+-DProtobuf_ROOT=$PROTOBUF_ROOT}        \
+cmake "$SOURCEDIR"                                              \
+      ${CMAKE_GENERATOR:+-G "$CMAKE_GENERATOR"}                 \
+      -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"                     \
+      "${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT}"                 \
+      "${FAIRLOGGER_ROOT:+-DFairLogger_ROOT=$FAIRLOGGER_ROOT}"  \
+      "${FAIRMQ_ROOT:+-DFairMQ_ROOT=$FAIRMQ_ROOT}"              \
+      "${PPCONSUL_ROOT:+-Dppconsul_DIR=${PPCONSUL_ROOT}/cmake}" \
+      "${MONITORING_ROOT:+-DMonitoring_ROOT=$MONITORING_ROOT}"  \
+      "${PROTOBUF_ROOT:+-DProtobuf_ROOT=$PROTOBUF_ROOT}"        \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-cp ${BUILDDIR}/compile_commands.json ${INSTALLROOT}
+cp "${BUILDDIR}/compile_commands.json" "${INSTALLROOT}"
 # reduce number of compile slots if invoked by Jenkins
 if [[ -v JENKINS_HOME ]]; then
   JOBS=1
@@ -49,7 +48,7 @@ cmake --build . -- ${JOBS+-j $JOBS} install
 
 #ModuleFile
 mkdir -p etc/modulefiles
-cat > etc/modulefiles/$PKGNAME <<EoF
+cat > "etc/modulefiles/$PKGNAME" <<EoF
 #%Module1.0
 proc ModulesHelp { } {
   global version
@@ -73,10 +72,5 @@ set DATADISTRIBUTION_ROOT \$::env(BASEDIR)/$PKGNAME/\$version
 
 prepend-path PATH \$DATADISTRIBUTION_ROOT/bin
 
-# Not used for now:
-# prepend-path LD_LIBRARY_PATH \$DATADISTRIBUTION_ROOT/lib
-# prepend-path LD_LIBRARY_PATH \$DATADISTRIBUTION_ROOT/lib64
-# prepend-path ROOT_INCLUDE_PATH \$DATADISTRIBUTION_ROOT/include
-
 EoF
-mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
+mkdir -p "$INSTALLROOT/etc/modulefiles" && rsync -a --delete etc/modulefiles/ "$INSTALLROOT/etc/modulefiles"
