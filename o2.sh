@@ -1,6 +1,6 @@
 package: O2
 version: "%(tag_basename)s"
-tag: v21.07
+tag: RawReaderCRU
 requires:
   - arrow
   - FairRoot
@@ -33,7 +33,7 @@ build_requires:
   - RapidJSON
   - googlebenchmark
   - O2-customization
-source: https://github.com/AliceO2Group/AliceO2
+source: https://github.com/wiechula/AliceO2
 env:
   VMCWORKDIR: "$O2_ROOT/share"
 prepend_path:
