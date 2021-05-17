@@ -1,6 +1,6 @@
 package: O2
 version: "%(tag_basename)s"
-tag: nightly-20210513
+tag: nightly-20210517
 requires:
   - arrow
   - FairRoot
@@ -119,6 +119,7 @@ incremental_recipe: |
 valid_defaults:
   - o2
   - o2-dataflow
+  - o2-dataflow-epn
   - o2-dev-fairroot
   - alo
   - o2-prod
