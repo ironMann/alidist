@@ -1,6 +1,6 @@
 package: QualityControl
 version: "%(tag_basename)s"
-tag: v1.17.0
+tag: v1.18.1
 requires:
   - boost
   - "GCC-Toolchain:(?!osx)"
@@ -35,13 +35,13 @@ incremental_recipe: |
 #!/bin/bash -ex
 
 case $ARCHITECTURE in
-  osx*) 
+  osx*)
       [[ ! $BOOST_ROOT ]] && BOOST_ROOT=$(brew --prefix boost)
       [[ ! $OPENSSL_ROOT ]] && OPENSSL_ROOT_DIR=$(brew --prefix openssl)
       [[ ! $LIBUV_ROOT ]] && LIBUV_ROOT=$(brew --prefix libuv)
       SONAME=dylib
   ;;
-  *) 
+  *)
       SONAME=so
   ;;
 esac
